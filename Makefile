@@ -9,7 +9,7 @@ os-image : boot_sect.bin kernel.bin
 	cat $^ > $@
 
 boot_sect.bin : boot/boot_sect.asm
-	nasm $^ -o $@
+	nasm -i boot/ $^ -o $@
 
 kernel.bin : $(OBJS)
 	ld -m elf_i386 -Ttext 0x1000 --oformat binary -s $^ -o $@

@@ -1,28 +1,41 @@
 #include "screen.h"
 #include "../kernel/low_level.h"
 
-void print_char(char character, int col, int row, char attribute_byte){
+typedef int (*char_handler_fn)(char c, int offset, char attr);
+    
+int handle_newline(char c, int offset, char attr) {
+    int rows = offset / (2 * MAX_COLS);
+    return get_screen_offset(0, rows + 1);
+}
+
+int handle_backspace(char c, int offset, char attr) {
+    offset -= 2;
+    ((char*)VIDEO_ADDRESS)[offset] = ' ';
+    return offset;
+}
+
+int handle_regular(char c, int offset, char attr) {
+    unsigned char *vidmem = (unsigned char *)VIDEO_ADDRESS;
+    vidmem[offset] = c;
+    vidmem[offset + 1] = attr;
+    return offset + 2;
+}
+
+char_handler_fn char_map[256] = {
+    [0 ... 255] = handle_regular,
+    [0x08] = handle_backspace,
+    [0x0A] = handle_newline,
+};
+
+void print_char(char character, char attribute_byte){
     unsigned char *vidmem = (unsigned char *) VIDEO_ADDRESS;
     if (!attribute_byte){
 	attribute_byte = WHITE_ON_BLACK;
     }
 
-    int offset;
-    if (col >= 0 && row >= 0){
-	offset = get_screen_offset(col, row);
-    } else {
-	offset = get_cursor();
-    }
+    int offset = get_cursor();
+    offset = char_map[(unsigned char)character](character, offset, attribute_byte);
 
-    if (character == '\n') {
-	int rows = offset / (2*MAX_COLS);
-	offset = get_screen_offset(79, rows);
-    } else {
-	vidmem[offset] = character;
-	vidmem[offset+1] = attribute_byte;
-    }
-
-    offset += 2;
     offset = handle_scrolling(offset);
     set_cursor(offset);
 }
@@ -53,22 +66,22 @@ void print_at(char* message, int col, int row) {
     }
     int i = 0;
     while(message[i] != 0){
-	print_char(message[i++], col, row, WHITE_ON_BLACK);
+	print_char(message[i++], WHITE_ON_BLACK);
     }
 }
 
 void print(char* message) {
-    print_at(message, -1, -1);
+    int i = 0;
+    while(message[i] != 0){
+	print_char(message[i++], WHITE_ON_BLACK);
+    }
 }
 
 void clear_screen() {
-    int row = 0;
-    int col = 0;
-
-    for (row=0; row<MAX_ROWS; row++) {
-	for (col=0; col<MAX_COLS; col++) {
-	    print_char(' ', col, row, WHITE_ON_BLACK);
-	}
+    set_cursor(get_screen_offset(0, 0));
+    
+    for (int i=0; i<MAX_ROWS * MAX_COLS; i++) {
+	print_char(' ', WHITE_ON_BLACK);
     }
 
     set_cursor(get_screen_offset(0, 0));
