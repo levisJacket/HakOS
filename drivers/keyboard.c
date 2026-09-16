@@ -1,7 +1,6 @@
 #include "keyboard.h"
 #include "screen.h"
-
-uint8_t keyboard_state = 0b00000000 ;
+#include "../kernel/shell.h"
 
 // Zeroes are Escape, Ctrl, L Shift, R Shift, Alt in order 
 const char keymap[2][128] = {
@@ -22,11 +21,22 @@ const char keymap[2][128] = {
     }
 };
 
+char line_buffer[256];
+char buffer_index = 0;
+char keyboard_state = 0b00000000 ;
+
 void keyboard_callback(uint8_t scancode){
     char release = scancode & 0x80;
     char type = scancode & 0x7F;
     char letter = keymap[keyboard_state & 1][type];
     char to_print[2] = {'0', 0};
+
+    if (letter == '\n' && !release) {
+	line_buffer[buffer_index] = 0;
+	shell_execute(line_buffer);
+	buffer_index = 0;
+	return;
+    }
 
     if (letter == 0){
 	if (type == 42||type == 54) {
@@ -38,6 +48,11 @@ void keyboard_callback(uint8_t scancode){
     if (release) {
 	
     } else {
+	if(type == 14){
+	    line_buffer[--buffer_index] = ' ';
+	} else {
+	    line_buffer[buffer_index++] = letter;
+	}
 	to_print[0] = letter;
 	print(to_print);
     }

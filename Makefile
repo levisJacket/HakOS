@@ -3,7 +3,18 @@ all: os-image
 	bochs
 	echo "made"
 
-OBJS = kernel/kernel_entry.o kernel/kernel.o drivers/screen.o kernel/low_level.o cpu/idt.o cpu/interrupt.o cpu/isr.o cpu/irq.o drivers/keyboard.o
+OBJS =				\
+kernel/kernel_entry.o 		\
+kernel/kernel.o 		\
+kernel/low_level.o 		\
+kernel/shell.o 			\
+drivers/screen.o		\
+drivers/keyboard.o 		\
+cpu/idt.o 			\
+cpu/interrupt.o 		\
+cpu/isr.o 			\
+cpu/irq.o
+
 
 os-image : boot_sect.bin kernel.bin
 	cat $^ > $@
