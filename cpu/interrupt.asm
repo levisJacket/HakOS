@@ -1,6 +1,7 @@
 [bits 32]
 [extern isr_handler]
 [extern irq_handler]
+[extern current_process]
 
 
 isr_common_stub:
@@ -41,7 +42,13 @@ irq_common_stub:
 
     push esp                 ; Pass registers_t* to C
     call irq_handler
-    add esp, 4
+
+    mov ebx, [current_process]      
+
+    mov eax, [ebx + 12]         ; cr3 = current_process->page_directory
+    mov cr3, eax 
+
+    mov esp, [ebx + 8] 		; esp = current_process->page_directory
 
     pop eax
     mov ds, ax

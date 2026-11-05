@@ -2,6 +2,8 @@
 #include "idt.h"
 #include "../drivers/screen.h"
 
+extern void print_long(uint32_t val);
+
 void isr_handler(registers_t *r) {
     print("RECEIVED INTERRUPT: ");
     char num_str[4];
@@ -10,6 +12,15 @@ void isr_handler(registers_t *r) {
     num_str[2] = '\n';
     num_str[3] = 0;
     print(num_str);
+
+    if(r->int_no == 14){
+	uint32_t fault_address;
+        asm volatile("mov %%cr2, %0" : "=r"(fault_address));
+	print_long(fault_address);
+	print_long(r->eip);
+	print_long(r->err_code);
+
+    }
 }
 
 void isr_install() {

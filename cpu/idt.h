@@ -18,6 +18,7 @@ typedef struct {
     uint32_t base;        // 32-bit base address of the IDT array
 } __attribute__((packed)) idt_register_t;
 
+// 64bytes total
 typedef struct {
     uint32_t ds;                                     // Data segment selector
     uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; // Pushed by pusha

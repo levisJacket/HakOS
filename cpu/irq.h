@@ -20,6 +20,6 @@ extern void irq14();
 extern void irq15();
 
 void pic_remap();
-void irq_handler(registers_t *r);
+void irq_handler(registers_t* r);
 
 void irq_install();

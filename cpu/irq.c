@@ -1,8 +1,11 @@
 #include "irq.h"
 #include "idt.h"
 #include "../kernel/low_level.h"
+#include "../kernel/process.h"
 #include "../drivers/screen.h"
 #include "../drivers/keyboard.h"
+extern process_t *current_process;
+
 
 uint8_t tick;
 
@@ -31,22 +34,25 @@ void pic_remap(){
     //port_byte_out(0xA1, 0xFF);
 }
 
-void irq_handler(registers_t *r) {
+void irq_handler(registers_t* r) {
     if (r->int_no == 32) {
 	tick++;
+	current_process->esp = (uint32_t)r;
+	if(!(tick & 63)){
+	    schedule((uint32_t)r);
+	}
     }
 
     if (r->int_no == 33) {
 	uint8_t scancode = port_byte_in(0x60);
-	
 	keyboard_callback(scancode);
     }
 
-    // send EOI
     if (r->int_no >= 40) {
 	port_byte_out(0xA0, 0x20); //Slave
     }
     port_byte_out(0x20, 0x20);     //Master
+
 }   
 
 void irq_install() {

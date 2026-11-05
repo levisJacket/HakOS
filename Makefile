@@ -8,6 +8,8 @@ kernel/kernel_entry.o 		\
 kernel/kernel.o 		\
 kernel/low_level.o 		\
 kernel/shell.o 			\
+kernel/process.o		\
+kernel/memory.o			\
 drivers/screen.o		\
 drivers/keyboard.o 		\
 cpu/idt.o 			\
@@ -18,6 +20,7 @@ cpu/irq.o
 
 os-image : boot_sect.bin kernel.bin
 	cat $^ > $@
+	truncate -s 1474560 $@
 
 boot_sect.bin : boot/boot_sect.asm
 	nasm -i boot/ $^ -o $@
