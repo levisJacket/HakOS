@@ -107,8 +107,6 @@ void destroy_process(int pid){
 process_t* schedule(uint32_t current_esp) {
     //if (!current_process) return NULL;
 
-
-    // next process
     current_process = current_process->next;
 
     return current_process;

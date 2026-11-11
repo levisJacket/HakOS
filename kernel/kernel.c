@@ -2,6 +2,7 @@
 #include "../cpu/isr.h"
 #include "../cpu/irq.h"
 #include "../cpu/idt.h"
+#include "shell.h"
 #include "memory.h"
 #include "process.h"
 
@@ -35,7 +36,7 @@ void main(boot_info_t info) {
     pmm_init(info.memory_map_addr, mem_bitmap);
 
     clear_process();
-    process_t* proc1 = create_process(printHello);
+    process_t* proc1 = create_process(shell_loop);
     process_t* proc2 = create_process(printBye);
 
     asm volatile("int $16");

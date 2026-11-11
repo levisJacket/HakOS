@@ -3,7 +3,7 @@
 #include "../kernel/shell.h"
 
 // Zeroes are Escape, Ctrl, L Shift, R Shift, Alt in order 
-const char keymap[2][128] = {
+static const char keymap[2][128] = {
     {
 	0,       27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b',
 	'\t',   'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n',
@@ -21,39 +21,27 @@ const char keymap[2][128] = {
     }
 };
 
-char line_buffer[256];
-char buffer_index = 0;
+static const uint8_t is_shift[128] = { [42] = 1, [54] = 1 };
+
+char keyboard_buffer[256];
+unsigned char keyboard_buffer_first = 0;
+unsigned char keyboard_buffer_last = 0;
 char keyboard_state = 0b00000000 ;
 
 void keyboard_callback(uint8_t scancode){
     char release = scancode & 0x80;
     char type = scancode & 0x7F;
+
+    keyboard_state ^= is_shift[type];
+
+    if (release) { return; }
+
     char letter = keymap[keyboard_state & 1][type];
-    char to_print[2] = {'0', 0};
 
-    if (letter == '\n' && !release) {
-	line_buffer[buffer_index] = 0;
-	shell_execute(line_buffer);
-	buffer_index = 0;
-	return;
-    }
+    if (letter) { keyboard_buffer[keyboard_buffer_last++] = letter; }
+}
 
-    if (letter == 0){
-	if (type == 42||type == 54) {
-	    keyboard_state ^= 0x01;
-	}
-	return;
-    }
-
-    if (release) {
-	
-    } else {
-	if(type == 14){
-	    line_buffer[--buffer_index] = ' ';
-	} else {
-	    line_buffer[buffer_index++] = letter;
-	}
-	to_print[0] = letter;
-	print(to_print);
-    }
+char getchar(){
+    if (keyboard_buffer_first == keyboard_buffer_last) { return 0; }
+    return keyboard_buffer[keyboard_buffer_first++];
 }

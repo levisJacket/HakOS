@@ -1,5 +1,6 @@
 #include "shell.h"
 #include "../drivers/screen.h"
+#include "../drivers/keyboard.h"
 
 int strcmp(const char *s1, const char *s2) {
     while (*s1 && (*s1 == *s2)) {
@@ -67,3 +68,18 @@ void shell_execute(char *line_buffer) {
     print(argv[0]);
     print(": command not found\n");
 }
+
+void shell_loop(){
+    char line_buffer[256];
+    char buffer_index = 0;
+
+    while(1){
+	char next_letter[2];
+	next_letter[0] = getchar();
+	next_letter[1] = 0;
+	if(next_letter){
+	    print(next_letter);
+	}
+    }
+}
+
