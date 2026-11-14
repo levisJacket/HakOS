@@ -35,9 +35,10 @@ void pic_remap(){
 }
 
 void irq_handler(registers_t* r) {
+    current_process->esp = (uint32_t)r;
+
     if (r->int_no == 32) {
 	tick++;
-	current_process->esp = (uint32_t)r;
 	if(!(tick & 63)){
 	    schedule((uint32_t)r);
 	}

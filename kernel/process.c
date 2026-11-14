@@ -108,6 +108,6 @@ process_t* schedule(uint32_t current_esp) {
     //if (!current_process) return NULL;
 
     current_process = current_process->next;
-
+    print_long(current_process->pid);
     return current_process;
 }

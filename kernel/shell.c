@@ -71,15 +71,21 @@ void shell_execute(char *line_buffer) {
 
 void shell_loop(){
     char line_buffer[256];
-    char buffer_index = 0;
+    unsigned char buffer_index = 0;
 
     while(1){
-	char next_letter[2];
-	next_letter[0] = getchar();
-	next_letter[1] = 0;
+	char next_letter = getchar();
+
 	if(next_letter){
-	    print(next_letter);
+	    if(next_letter == '\n'){
+		line_buffer[buffer_index] = 0;
+		shell_execute(line_buffer);
+		buffer_index = 0;
+	    } else if (next_letter == '\b' && buffer_index) {
+		buffer_index--;
+	    } else {
+		line_buffer[buffer_index++] = next_letter;
+	    }
 	}
     }
 }
-
