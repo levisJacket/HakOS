@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PROCESS_H
+#define PROCESS_H
+
 #include <stdint.h>
 
 #define PROCESS_UNUSED 0
@@ -15,8 +17,10 @@ typedef struct process {
     struct process* next;
 } process_t;
 
-void clear_process();
-process_t* create_process(void (*entry_point)());
-void destroy_process(int pid);
+void process_clear();
+int process_create(void (*entry_point)());
+void process_cleanup();
 
-process_t* schedule(uint32_t current_esp);
+void schedule(uint32_t current_esp);
+
+#endif

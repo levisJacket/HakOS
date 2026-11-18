@@ -1,3 +1,5 @@
+#ifndef MEMORY_H
+#define MEMORY_H
 #include <stdint.h>
 
 #define PAGE_SIZE       4096
@@ -13,3 +15,5 @@ uint32_t* create_process_directory();
 void map_page(uint32_t *dir, uint32_t virtual_addr, uint32_t physical_addr, uint32_t flags);
 
 uint32_t* get_kernel_page_directory();
+
+#endif

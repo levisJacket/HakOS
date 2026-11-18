@@ -1,6 +1,9 @@
 #include "shell.h"
 #include "../drivers/screen.h"
 #include "../drivers/keyboard.h"
+#include "../kernel/process.h"
+
+#include "dummy.h"
 
 int strcmp(const char *s1, const char *s2) {
     while (*s1 && (*s1 == *s2)) {
@@ -22,6 +25,8 @@ command_entry command_list[];
 void cmd_help(int argc, char **argv){
     for(int i=0; command_list[i].name; i++){
 	print(command_list[i].name);
+extern void dummyProc();
+extern void dummyProc();
 	print("\n");
     }
 }
@@ -34,10 +39,15 @@ void cmd_echo(int argc, char **argv){
     if (argc > 1)	print(argv[1]);
 }
 
+void cmd_new(int argc, char **argv){
+    process_create(dummyProc);
+}
+
 command_entry command_list[] = {
     {"help",cmd_help},
     {"clear",cmd_clear},
     {"echo",cmd_echo},
+    {"new", cmd_new},
     {0,0},
 };
 
@@ -81,8 +91,8 @@ void shell_loop(){
 		line_buffer[buffer_index] = 0;
 		shell_execute(line_buffer);
 		buffer_index = 0;
-	    } else if (next_letter == '\b' && buffer_index) {
-		buffer_index--;
+	    } else if (next_letter == '\b') {
+		if (buffer_index) { buffer_index--; }
 	    } else {
 		line_buffer[buffer_index++] = next_letter;
 	    }

@@ -1,3 +1,5 @@
+#ifndef ISR_H
+#define ISR_H
 #include <stdint.h>
 #include "idt.h"
 
@@ -36,3 +38,4 @@ extern void isr31();
 
 void isr_handler(registers_t *r);
 void isr_install();
+#endif

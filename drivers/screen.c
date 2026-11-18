@@ -77,6 +77,19 @@ void print(char* message) {
     }
 }
 
+char charmap[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+
+void print_long(int val){
+    char to_print[10];
+    to_print[8] = '\n';
+    to_print[9] = 0;
+    for (int i = 0; i < 8 ; i++){
+	to_print[7-i] = charmap[val & 15];
+	val = val >> 4; 
+    }
+    print(to_print);
+}
+
 void clear_screen() {
     set_cursor(get_screen_offset(0, 0));
     

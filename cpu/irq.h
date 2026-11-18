@@ -1,4 +1,5 @@
-#pragma once
+#ifndef IRQ_H
+#define IRQ_H
 #include <stdint.h>
 #include "idt.h"
 
@@ -23,3 +24,4 @@ void pic_remap();
 void irq_handler(registers_t* r);
 
 void irq_install();
+#endif

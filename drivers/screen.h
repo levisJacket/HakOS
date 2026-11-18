@@ -20,6 +20,8 @@ void print_at(char* message, int col, int row);
 
 void print(char* message);
 
+void print_long(int val);
+
 void clear_screen();
 
 void memory_copy(char* source, char* dest, int no_bytes);

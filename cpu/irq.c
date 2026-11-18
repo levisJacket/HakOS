@@ -39,7 +39,7 @@ void irq_handler(registers_t* r) {
 
     if (r->int_no == 32) {
 	tick++;
-	if(!(tick & 63)){
+	if(!(tick & 15)){
 	    schedule((uint32_t)r);
 	}
     }
@@ -53,7 +53,6 @@ void irq_handler(registers_t* r) {
 	port_byte_out(0xA0, 0x20); //Slave
     }
     port_byte_out(0x20, 0x20);     //Master
-
 }   
 
 void irq_install() {

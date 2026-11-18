@@ -1,4 +1,5 @@
-#pragma once
+#ifndef IDT_H
+#define IDT_H
 #include <stdint.h>
 
 #define KERNEL_CS 0x08
@@ -32,3 +33,4 @@ extern idt_register_t idt_reg;
 
 void set_idt_gate(int n, uint32_t handler);
 void set_idt();
+#endif

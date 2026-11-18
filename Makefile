@@ -7,7 +7,6 @@ OBJS =				\
 kernel/kernel_entry.o 		\
 kernel/kernel.o 		\
 kernel/low_level.o 		\
-kernel/shell.o 			\
 kernel/process.o		\
 kernel/memory.o			\
 drivers/screen.o		\
@@ -15,8 +14,9 @@ drivers/keyboard.o 		\
 cpu/idt.o 			\
 cpu/interrupt.o 		\
 cpu/isr.o 			\
-cpu/irq.o
-
+cpu/irq.o			\
+user/shell.o 			\
+user/dummy.o
 
 os-image : boot_sect.bin kernel.bin
 	cat $^ > $@
