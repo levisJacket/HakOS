@@ -1,4 +1,5 @@
 *.o
 *.bin
+hdd.img
 bochs.log
 os-image

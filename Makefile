@@ -9,6 +9,7 @@ kernel/kernel.o 		\
 kernel/low_level.o 		\
 kernel/process.o		\
 kernel/memory.o			\
+drivers/ata.o			\
 drivers/screen.o		\
 drivers/keyboard.o 		\
 cpu/idt.o 			\
