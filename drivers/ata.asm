@@ -2,13 +2,12 @@ global ata_read_sector
 global ata_write_sector
 
 ata_read_sector:
+    push ebp
+    mov ebp, esp
+    
     push edi
-    mov eax, [esp + 8] ; eax = LBA 
-    mov edi, [esp + 12] ; edi = memory address
-
-    push edx
-    push ecx
-    push eax
+    mov eax, [ebp + 8] ; eax = LBA 
+    mov edi, [ebp + 12] ; edi = memory address
 
     ; select drive & top 4 bits of LBA:
     ; Port 0x1F6: 0xE0 (Master drive, LBA mode) | bits 24-27 of LBA
@@ -23,8 +22,7 @@ ata_read_sector:
     out dx, al
 
     ;send LBA bits 0-7 to 0x1F3:
-    pop eax                  ; Restore original LBA
-    push eax
+    mov eax, [ebp + 8]
     mov edx, 0x1F3
     out dx, al
 
@@ -56,20 +54,17 @@ ata_read_sector:
     mov ecx, 256             ; 256 words
     rep insw                 ; stream sector into RAM
 
-    pop eax
-    pop ecx
-    pop edx
     pop edi
+    pop ebp
     ret
 
 ata_write_sector:
-    push esi
-    mov eax, [esp + 8] ; eax = LBA 
-    mov esi, [esp + 12] ; edi = memory address
+    push ebp
+    mov ebp, esp
 
-    push edx
-    push ecx
-    push eax
+    push esi
+    mov eax, [ebp + 8] ; eax = LBA 
+    mov esi, [ebp + 12] ; esi = memory address
 
     mov edx, 0x1F6
     shr eax, 24
@@ -80,8 +75,7 @@ ata_write_sector:
     mov al, 1
     out dx, al
 
-    pop eax
-    push eax
+    mov eax, [ebp + 8]
     mov edx, 0x1F3
     out dx, al
 
@@ -111,8 +105,6 @@ ata_write_sector:
     mov al, 0xE7
     out 0x1F7, al
 
-    pop eax
-    pop ecx
-    pop edx
     pop esi
+    pop ebp
     ret
